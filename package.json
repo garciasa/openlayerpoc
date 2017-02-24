@@ -9,7 +9,7 @@
     "test:watch": "npm run test -- --watch",
     "build:watch": "webpack -p --config webpack.config.js --progress --colors --watch",
     "build:dev": "node ./node_modules/webpack/bin/webpack -p --config webpack.config.js --progress --colors",
-    "build:prod": "set NODE_ENV=production&&webpack -p --config webpack.prod.config.js --progress --colors&&npm run copyfiles"
+    "build:prod": "set NODE_ENV=production&&webpack -p --config webpack.prod.config.js --progress --colors"
   },
   "author": "garciasa",
   "license": "ISC",

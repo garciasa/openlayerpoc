@@ -58,12 +58,12 @@ const config = {
       __DEV__: true,
     }),
     new ExtractTextPlugin({
-      filename: 'dist/styles.css',
+      filename: 'styles.css',
       allChunks: true,
     }),
   ],
   resolve: {
-    extensions: ['.scss', '.js', '.json'],
+    extensions: ['.scss', '.js'],
   },
 };
 

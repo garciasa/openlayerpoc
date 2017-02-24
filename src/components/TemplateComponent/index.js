@@ -1,6 +1,6 @@
 import React from 'react';
 
-// /import styles from './templatecomponent.scss';
+import styles from './templatecomponent.scss';
 
 class TemplateComponent extends React.Component {
   render() {
