@@ -1,19 +1,133 @@
 import React from 'react';
+import ol from 'openlayers';
+import { connect } from 'react-redux';
 
+import { loadLayer, unloadLayer } from '../../actions';
+
+import 'openlayers/css/ol.css';
 import styles from './templatecomponent.scss';
 
+
 class TemplateComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.ref = null;
+    this.map = null;
+
+    this.onLayer = this.onLayer.bind(this);
+  }
+
+  componentDidMount() {
+    this.map = new ol.Map({
+      target: this.ref,
+    });
+
+    this.map.addLayer(new ol.layer.Tile({
+      source: new ol.source.OSM(),
+    }));
+
+    this.map.setView(new ol.View({
+      center: [949282, 6002552],
+      zoom: 5,
+    }));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { visibleLayers } = nextProps;
+    this.map.getLayers().forEach((l) => {
+      this.map.removeLayer(l);
+    });
+
+    // Base Layer
+    this.map.addLayer(new ol.layer.Tile({
+      source: new ol.source.OSM(),
+    }));
+
+    visibleLayers.layers.forEach((l) => {
+      this.map.addLayer(l.tile);
+    });
+  }
+
+  onLayer(id) {
+    const { visibleLayers } = this.props;
+    let layer = null;
+
+    switch (id) {
+      case 'layer1':
+       layer = {
+          id: 'layer1',
+          tile: new ol.layer.Tile({
+            title: 'layer1',
+            source: new ol.source.XYZ({
+              url: 'http://s.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+            }),
+          }),
+        };
+        break;
+      case 'layer2':
+       layer = {
+          id: 'layer2',
+          tile: new ol.layer.Tile({
+            title: 'layer2',
+            source: new ol.source.XYZ({
+              url: 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+                   'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+            }),
+          }),
+        };
+        break;
+      case 'layer3':
+       layer = {
+         id: 'layer3',
+         tile: new ol.layer.Tile({
+           title: 'layer1',
+           source: new ol.source.XYZ({
+             url: 'http://s.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+           }),
+         }),
+       };
+        break;
+    }
+
+    let findit = false;
+    visibleLayers.layers.forEach((l) => {
+      if (l.id === id) {
+        findit = true;
+      }
+    });
+
+    if (findit) { // Remove it
+        this.props.unloadLayer(layer.id);
+    } else { // Add it
+        this.props.loadLayer(layer);
+    }
+  }
+
   render() {
     return (
       <div>
-        <div className="container">
-          <span className="text">
-            React App Template
-          </span>
+        <div id="map" ref={(m) => { this.ref = m; }} />
+        <div className="layers">
+          <div>
+            <input onClick={() => this.onLayer('layer1')} type="checkbox" name="layer1" />
+            <span className="margin-left">Layer1</span>
+          </div>
+          <div>
+            <input onClick={() => this.onLayer('layer2')} type="checkbox" name="layer2" />
+            <span className="margin-left">Layer2</span>
+          </div>
+          <div>
+            <input onClick={() => this.onLayer('layer3')} type="checkbox" name="layer3" />
+            <span className="margin-left">Layer3</span>
+          </div>
         </div>
       </div>
     );
   }
 }
 
-export default TemplateComponent;
+const mapStateToProps = ({ visibleLayers }) => ({
+  visibleLayers,
+});
+
+export default connect(mapStateToProps, { loadLayer, unloadLayer })(TemplateComponent);

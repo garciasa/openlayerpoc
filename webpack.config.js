@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 
 const config = {
   devtool: 'eval-source-map',
@@ -61,6 +62,7 @@ const config = {
       filename: 'styles.css',
       allChunks: true,
     }),
+    new DashboardPlugin(),
   ],
   resolve: {
     extensions: ['.scss', '.js'],

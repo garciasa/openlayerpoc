@@ -11,3 +11,12 @@
   margin-left: 10px;
   @include headline($color-black,19px);
 }
+
+.layers{
+  display: flex;
+  flex-direction: column;
+}
+
+.margin-left{
+  margin-left: 10px;
+}
