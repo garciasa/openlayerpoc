@@ -1,2 +1,2 @@
 # react-template
-Template for React+Redux projects
+TPOC working with openlayers + React + Redux
