@@ -1,2 +1,2 @@
-# react-template
-TPOC working with openlayers + React + Redux
+# Openlayers React 
+POC working with openlayers + React + Redux
