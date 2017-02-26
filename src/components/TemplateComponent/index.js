@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ol from 'openlayers';
 import { connect } from 'react-redux';
 
@@ -6,6 +6,10 @@ import { loadLayer, unloadLayer } from '../../actions';
 
 import 'openlayers/css/ol.css';
 import styles from './templatecomponent.scss';
+
+const propTypes = {
+  wmslayers: PropTypes.array.isRequired,
+};
 
 
 class TemplateComponent extends React.Component {
@@ -21,19 +25,10 @@ class TemplateComponent extends React.Component {
     this.map = new ol.Map({
       target: this.ref,
     });
-
-    this.map.addLayer(new ol.layer.Tile({
-      source: new ol.source.OSM(),
-    }));
-
-    this.map.setView(new ol.View({
-      center: [949282, 6002552],
-      zoom: 5,
-    }));
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visibleLayers } = nextProps;
+    const { wmslayers } = nextProps;
     this.map.getLayers().forEach((l) => {
       this.map.removeLayer(l);
     });
@@ -43,13 +38,13 @@ class TemplateComponent extends React.Component {
       source: new ol.source.OSM(),
     }));
 
-    visibleLayers.layers.forEach((l) => {
+    wmslayers.forEach((l) => {
       this.map.addLayer(l.tile);
     });
   }
 
   onLayer(id) {
-    const { visibleLayers } = this.props;
+    const { wmslayers } = this.props;
     let layer = null;
 
     switch (id) {
@@ -66,15 +61,17 @@ class TemplateComponent extends React.Component {
         break;
       case 'layer2':
        layer = {
-          id: 'layer2',
-          tile: new ol.layer.Tile({
-            title: 'layer2',
-            source: new ol.source.XYZ({
-              url: 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
-                   'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-            }),
-          }),
-        };
+         id: 'layer2',
+         tile: new ol.layer.Tile({
+           title: 'layer2',
+           extent: [-13884991, 2870341, -7455066, 6338219],
+           source: new ol.source.TileWMS({
+             url: 'https://ahocevar.com/geoserver/wms',
+             params: { LAYERS: 'topp:states', TILED: true },
+             serverType: 'geoserver',
+           }),
+         }),
+       };
         break;
       case 'layer3':
        layer = {
@@ -90,7 +87,7 @@ class TemplateComponent extends React.Component {
     }
 
     let findit = false;
-    visibleLayers.layers.forEach((l) => {
+    wmslayers.forEach((l) => {
       if (l.id === id) {
         findit = true;
       }
@@ -126,8 +123,10 @@ class TemplateComponent extends React.Component {
   }
 }
 
-const mapStateToProps = ({ visibleLayers }) => ({
-  visibleLayers,
+TemplateComponent.propTypes = propTypes;
+
+const mapStateToProps = ({ wmslayers }) => ({
+  wmslayers,
 });
 
 export default connect(mapStateToProps, { loadLayer, unloadLayer })(TemplateComponent);

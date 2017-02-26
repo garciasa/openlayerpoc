@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
 
-import LayerReducer from './LayerReducer';
+import WMSLayerReducer from './WMSLayerReducer';
+import VectorLayerReducer from './VectorLayerReducer';
 
 export default combineReducers({
-  visibleLayers: LayerReducer,
+  wmslayers: WMSLayerReducer,
+  vectorlayers: VectorLayerReducer,
 });
